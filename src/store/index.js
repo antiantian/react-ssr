@@ -1,4 +1,4 @@
-import axios from 'axios'
+import    {Axios,serverAxios} from '../request'
 // import {dispatch} from 'redux'
 //首页的逻辑
 //indexReducer
@@ -11,8 +11,10 @@ const changeList = list =>({
 })
 
 export const getIndexList = server =>{
+    const  HttpGet = server?serverAxios:Axios;
     return (dispatch)=>{
-        return axios.get('http://localhost:9090/api/course/list')
+        //http://localhost:9090
+        return HttpGet.get('/api/course/list2')
         .then(res=>{
              const {list} = res.data
              dispatch(changeList(list))

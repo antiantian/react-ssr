@@ -2,18 +2,35 @@ import   React,{useState} from 'react';
 import {Route} from 'react-router-dom';
 import Index from './container/index'
 import About from './container/about'
+import User from './container/home'
+ 
+// export default (
+//   <div >
+//   <Route path="/" exact component={Index}></Route>
+//   <Route path="/about" exact component={About}></Route>
+// </div>
+// );
+//改造成js配置 才能获取组件 
 
-function App(props){
- const [count,setCount] = useState(1)
-  return <div>
-         <Route path="/" exact component={Index}></Route>
-         <Route path="/about" exact component={About}></Route>
-  </div>
-}
-import { format } from 'path'
-export default (
-  <div >
-  <Route path="/" exact component={Index}></Route>
-  <Route path="/about" exact component={About}></Route>
-</div>
-);
+
+export default [
+   {
+      path:'/',
+      component:Index,
+    //  exact:true,
+      key:'index'
+   },
+   {
+    path:'/about',
+    component:About,
+    exact:true,
+    key:'about'
+   }
+   ,
+   {
+    path:'/user',
+    component:User,
+    exact:true,
+    key:'user'
+   }
+]

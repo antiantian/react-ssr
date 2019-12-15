@@ -23,14 +23,18 @@
  npm i 或者 npm install
 ```
 
- 
+ ```bash
+使用http-proxy-middleware 转发接口解决跨域问题
+```
 
 ```bash
  
 npm run dev:server 服务端打包
 npm run dev:start  启动项目
 npm run dev:client 客户端打包 
- 
+
+npm run start  启动项目
+node mock.js   数据接口
 打开 http://localhost:9093
 ```
 
