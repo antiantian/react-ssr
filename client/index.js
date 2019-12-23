@@ -15,11 +15,23 @@ const Page =(
                <Header></Header>
                <Switch>
                 {routes.map(route=>{
-                    return <Route {...route}></Route>
+                    return <Route  key={route.key} {...route}></Route>
                 })}
                 </Switch>
             </BrowserRouter>
         </Provider>
 )
+/*
+  解决
+  react-dom.development.js:530 Warning: Expected server HTML to contain a matching <div> in <div>.
+*/
+if( window.__context){
+     //服务端渲染
+     //ssr
+     ReactDom.hydrate(Page,document.getElementById('root'))
+}else{
+    ReactDom.render(Page,document.getElementById('root'))
+
+}
 //多页应用
-ReactDom.hydrate(Page,document.getElementById('root'))
+//ReactDom.hydrate(Page,document.getElementById('root'))

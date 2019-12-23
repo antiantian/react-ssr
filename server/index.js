@@ -1,4 +1,6 @@
 // 这里的node代码 会用babel处理
+import path from 'path'
+import fs from  'fs'
 import React from 'react'
 import {renderToString} from 'react-dom/server'
 import express from 'express'
@@ -19,8 +21,20 @@ app.use(
       changeOrigin: true 
     })
 );
+function csrRender(res){
+  //读取csr文件  返回
+  const filename = path.resolve(process.cwd(),'public/index.csr.html')
+  const html = fs.readFileSync(filename,'utf-8')
+  return res.send(html)
+}
 //设置静态资源目录
 app.get('*',(req,res)=>{
+   if(req.query._mode=='csr'){
+     console.log('open ---- 降级')
+     return  csrRender(res)
+   }
+   //配置开关 csr
+   //服务器负载过高 开启
     //获取根据路由渲染的组件 并拿到loadData方法 获取数据
           // if(req.url.startsWith('/api/')){
           //     //不渲染页面 使用axios转发 axios.get 
@@ -63,14 +77,16 @@ app.get('*',(req,res)=>{
     //等待所有网络请求结束在渲染
   
       const  renders= ()=>{
-        const context = {};
+        const context = {
+          css:[]
+        };
         const content = renderToString(
           <Provider store={store}>
             <StaticRouter location={req.url} context={context}>
                 <Header></Header>
                 <Switch>
                 {routes.map(route=>{
-                  return <Route {...route}></Route>
+                  return <Route key={route.key} {...route}></Route>
                 })}
                 </Switch>
             </StaticRouter>
@@ -85,6 +101,7 @@ app.get('*',(req,res)=>{
           console.log(context)
           res.redirect(301,context.url)
         }
+        const css = context.css.join('\n')
         console.log('store.getState()-------------')
         console.log(store.getState())
          return (
@@ -96,6 +113,7 @@ app.get('*',(req,res)=>{
                 <head>
                   <meta charset="utf-8"/>
                   <title>react ssr</title>
+                  <style>${css}</style>
                 </head>
                 <body>
                   <div id="root">${content}</div>
