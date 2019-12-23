@@ -18,7 +18,11 @@ module.exports = {
                 options:{ //babel配置 编译级别   jsx   支持最新的es写法牛皮
                    presets:['@babel/preset-react',['@babel/preset-env']]  
                 }
-            }
+            },
+             {
+                test: /\.css$/,
+                 use:['style-loader','css-loader']
+             }
         ]
     }
 }

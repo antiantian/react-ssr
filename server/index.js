@@ -2,13 +2,13 @@
 import React from 'react'
 import {renderToString} from 'react-dom/server'
 import express from 'express'
-import {StaticRouter,matchPath,Route} from 'react-router-dom';
+import {StaticRouter,matchPath,Route,Switch} from 'react-router-dom';
 import  {Provider} from 'react-redux'
 import routes from '../src/app'
 import {getServerStore} from '../src/store/store'
 import Header from '../src/component/Header'
 var proxy = require('http-proxy-middleware');
- 
+ //express-proxy-middleware
 const app = express();
 const store =getServerStore()
 app.use(express.static('public'))
@@ -22,7 +22,9 @@ app.use(
 //设置静态资源目录
 app.get('*',(req,res)=>{
     //获取根据路由渲染的组件 并拿到loadData方法 获取数据
- 
+          // if(req.url.startsWith('/api/')){
+          //     //不渲染页面 使用axios转发 axios.get 
+          // }
       const  getApi=(loadData)=>{
           return new Promise((res,rej)=>{
                  var data = loadData(store);
@@ -46,23 +48,43 @@ app.get('*',(req,res)=>{
            const  {loadData}= route.component;
            console.log(loadData)
            if(loadData){ 
-              promises.push(getApi(loadData))
+             //包装后  
+             //规避错误 可以考虑加日志
+             const promise =new Promise((resolve,reject)=>{
+                loadData(store).then(resolve).catch(resolve
+                  )
+             })
+             //getApi(loadData)
+               promises.push(promise)
+            // promises.push(loadData(store))
            }
          }
       })
     //等待所有网络请求结束在渲染
   
       const  renders= ()=>{
+        const context = {};
         const content = renderToString(
           <Provider store={store}>
-            <StaticRouter location={req.url}>
+            <StaticRouter location={req.url} context={context}>
                 <Header></Header>
+                <Switch>
                 {routes.map(route=>{
                   return <Route {...route}></Route>
                 })}
+                </Switch>
             </StaticRouter>
           </Provider>
         );
+        console.log('context22',context)
+        if(context.statuscode){
+            //状态的切换和页面跳转
+            res.status(context.statuscode)
+        }
+        if(context.action=='REPLACE'){
+          console.log(context)
+          res.redirect(301,context.url)
+        }
         console.log('store.getState()-------------')
         console.log(store.getState())
          return (
@@ -87,6 +109,8 @@ app.get('*',(req,res)=>{
          )
       }
       // promises = promises.map(item=>getApi(item))
+      // Promise.all
+      //Promise.allSettled
       Promise.all(promises).then(data => {
         //  渲染 页面
         renders()

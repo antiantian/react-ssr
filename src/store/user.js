@@ -1,28 +1,29 @@
+// import axios from 'axios'
 import    {Axios,serverAxios} from '../request'
 // import {dispatch} from 'redux'
 //首页的逻辑
 //indexReducer
 //actionType
-const GET_LIST = 'INDEX/GET_LIST'
+const GET_LIST = 'INDEX/USER_INFO'
 //actionCreator
-const changeList = list =>({
+const changeList = data =>({
      type:GET_LIST,
-     list
+     data
 })
 
-export const getIndexList = () =>{
-  //  const  HttpGet = server?serverAxios:Axios;
-    return (dispatch,getState,$axios)=>{
-        //http://localhost:9090
-        return $axios.get('/api/course/list')
+export const getUserInfo= server =>{
+    const  HttpGet = server?serverAxios:Axios;
+    return (dispatch)=>{
+        return HttpGet.get('/api/user/info')
         .then(res=>{
-             const {list} = res.data
-             dispatch(changeList(list))
+             const {data} = res.data
+           
+             dispatch(changeList(data))
         })
     }
 }
 const defaultState ={
-    list:[]
+    userinfo:{}
 }
  
 export default (state=defaultState,action)=>{
@@ -30,7 +31,7 @@ export default (state=defaultState,action)=>{
          case  GET_LIST:
              const newState={
                   ...state,
-                  list:action.list
+                  userinfo:action.data
              }
              return newState
         default:
