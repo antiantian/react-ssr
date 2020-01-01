@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 //服务端的ewebpack
 module.exports = {
+    target: 'node',
     mode:'development',
     entry:"./client/index.js",
     output:{

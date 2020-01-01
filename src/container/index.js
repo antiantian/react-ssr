@@ -30,13 +30,31 @@ function Index(props){
          </ul>
   </div>
 }
-// 
-Index.loadData=(store)=>{
-     return store.dispatch(getIndexList( ))
-}
-export default connect(
+// 首页list闪现的原因   没有在服务端请求  loadData失效 因为返回的组件是经过connect withStyle 包装后的新组件
+/**/
+
+Index.loadData = (store) => {
+    return store.dispatch(getIndexList())
+  }
+  
+  Index = connect(
+    state => ({ list: state.index.list }),
+    { getIndexList }
+  )(withStyle(Index, Styles))
+  
+  
+  export default Index
+/*
+ const NewIndex =  connect(
     state=>({list:state.index.list||[]}),
     {
         getIndexList
     }
     )(withStyle(Index,Styles))
+
+  NewIndex.loadData=(store)=>{
+        return store.dispatch(getIndexList( ))
+ }
+
+   export default NewIndex
+*/

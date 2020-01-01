@@ -9,6 +9,7 @@ import  {Provider} from 'react-redux'
 import routes from '../src/app'
 import {getServerStore} from '../src/store/store'
 import Header from '../src/component/Header'
+import  config  from './config'
 var proxy = require('http-proxy-middleware');
  //express-proxy-middleware
 const app = express();
@@ -25,14 +26,16 @@ function csrRender(res){
   //读取csr文件  返回
   const filename = path.resolve(process.cwd(),'public/index.csr.html')
   const html = fs.readFileSync(filename,'utf-8')
-  return res.send(html)
+ //  return res.body = html
+ return res.send(html)
 }
 //设置静态资源目录
 app.get('*',(req,res)=>{
-   if(req.query._mode=='csr'){
+   if(req.query._mode=='csr'||config.csr){
      console.log('open ---- 降级')
      return  csrRender(res)
    }
+   console.log(23333333333)
    //配置开关 csr
    //服务器负载过高 开启
     //获取根据路由渲染的组件 并拿到loadData方法 获取数据

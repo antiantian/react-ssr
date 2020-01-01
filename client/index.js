@@ -25,11 +25,15 @@ const Page =(
   解决
   react-dom.development.js:530 Warning: Expected server HTML to contain a matching <div> in <div>.
 */
+
+console.log(window.__context)
 if( window.__context){
+ 
      //服务端渲染
      //ssr
      ReactDom.hydrate(Page,document.getElementById('root'))
 }else{
+ 
     ReactDom.render(Page,document.getElementById('root'))
 
 }
